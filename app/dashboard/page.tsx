@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
+
+const api = axios.create({ baseURL: "/api" });
 
 const navItems = [
     {
@@ -56,7 +59,20 @@ const navItems = [
 
 export default function Dashboard() {
     const pathname = usePathname();
+    const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
+
+    async function logout() {
+        try {
+            setLoggingOut(true);
+            await api.post("/auth/logout");
+        } catch {
+            // mesmo com erro, redireciona
+        } finally {
+            router.replace("/login");
+        }
+    }
 
     return (
         <div className="min-h-screen bg-[#f4f3f0] flex flex-col">
@@ -108,6 +124,25 @@ export default function Dashboard() {
                         </span>
                     </div>
 
+                    {/* Logout button */}
+                    <button
+                        onClick={logout}
+                        disabled={loggingOut}
+                        className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/35 hover:text-red-400 hover:bg-red-400/8 transition-all disabled:opacity-40"
+                    >
+                        {loggingOut ? (
+                            <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                            </svg>
+                        ) : (
+                            <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                                <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        )}
+                        Sair
+                    </button>
+
                     {/* Avatar */}
                     <div className="w-7 h-7 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/60 text-xs font-semibold cursor-pointer hover:bg-white/15 transition-colors">
                         A
@@ -146,6 +181,18 @@ export default function Dashboard() {
                             </Link>
                         );
                     })}
+
+                    {/* Logout mobile */}
+                    <button
+                        onClick={logout}
+                        disabled={loggingOut}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400/70 hover:text-red-400 hover:bg-red-400/8 transition-all mt-1 border-t border-white/5 pt-3"
+                    >
+                        <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Sair
+                    </button>
                 </div>
             )}
 
@@ -154,7 +201,6 @@ export default function Dashboard() {
                 <h1 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h1>
                 <p className="text-gray-400 text-sm mb-8">Bem-vindo de volta.</p>
 
-                {/* Placeholder para seu conteúdo */}
                 <div className="rounded-2xl border-2 border-dashed border-gray-200 h-64 flex items-center justify-center">
                     <p className="text-gray-300 text-sm">Seu conteúdo aqui</p>
                 </div>
