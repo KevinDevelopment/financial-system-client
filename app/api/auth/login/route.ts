@@ -35,16 +35,14 @@ export async function POST(req: Request) {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 15,
+            path: "/"
         });
 
         response.cookies.set("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7,
+            path: "/"
         });
 
         return response;

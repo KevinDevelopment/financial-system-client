@@ -30,7 +30,7 @@ export default function Login() {
             setLoading(true);
 
             await api.post("/auth/login", { email: username, password });
-            router.push("/dashboard");
+            router.replace("/dashboard");
         } catch (err: any) {
             const message = err.response?.data?.message;
             setError(message ?? "Erro inesperado. Tente novamente.");
