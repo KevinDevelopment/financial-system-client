@@ -56,8 +56,13 @@ export default function Dashboard() {
         }
     }
 
+    const params = new URLSearchParams({
+        page: "1",
+        perPage: "3"
+    });
+
     async function getAccounts() {
-        const { data } = await api.get("/accounts");
+        const { data } = await api.get(`/accounts?${params}`);
         setAccounts(data?.accounts);
     }
 

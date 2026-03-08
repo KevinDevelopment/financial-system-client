@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const cookieStore = await cookies();
         const accessToken = cookieStore.get("accessToken")?.value;
@@ -13,8 +13,12 @@ export async function GET() {
             )
         }
 
+        const { searchParams } = new URL(request.url);
+        const page = searchParams.get("page") ?? "1";
+        const perPage = searchParams.get("perPage") ?? "10";
+
         const backendResponse = await fetch(
-            `${process.env.BASE_URL}/accounts`,
+            `${process.env.BASE_URL}/accounts?page=${page}&perPage=${perPage}`,
             {
                 method: "GET",
                 headers: {
