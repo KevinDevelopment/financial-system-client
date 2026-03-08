@@ -1,11 +1,9 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
 import { usePathname, useRouter } from "next/navigation";
+import { api } from "../services/api";
 import Link from "next/link";
-import axios from "axios";
-
-const api = axios.create({ baseURL: "/api" });
 
 const navItems = [
     {
@@ -29,11 +27,23 @@ const navItems = [
     }
 ];
 
+type Account = {
+    id: string;
+    name: string;
+    type: number;
+    balance: number;
+    initialBalance: number,
+    currentBalance: number;
+    organizationId: bigint;
+    userId: bigint;
+};
+
 export default function Dashboard() {
     const pathname = usePathname();
     const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [loggingOut, setLoggingOut] = useState(false);
+    const [accounts, setAccounts] = useState<Account[]>([]);
 
     async function logout() {
         try {
@@ -45,6 +55,15 @@ export default function Dashboard() {
             router.replace("/login");
         }
     }
+
+    async function getAccounts() {
+        const { data } = await api.get("/accounts");
+        setAccounts(data?.accounts);
+    }
+
+    useEffect(() => {
+        getAccounts()
+    }, [])
 
     return (
         <div className="min-h-screen bg-[#f4f3f0] flex flex-col">
@@ -170,12 +189,46 @@ export default function Dashboard() {
 
             {/* ── Content ── */}
             <main className="flex-1 px-5 py-8 max-w-7xl w-full mx-auto">
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h1>
-                <p className="text-gray-400 text-sm mb-8">Bem-vindo de volta.</p>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">Contas</h1>
+                <p className="text-gray-400 text-sm mb-8">
+                    Gerencie suas contas financeiras.
+                </p>
 
-                <div className="rounded-2xl border-2 border-dashed border-gray-200 h-64 flex items-center justify-center">
-                    <p className="text-gray-300 text-sm">Seu conteúdo aqui</p>
-                </div>
+                {accounts.length > 0 ? (
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {accounts.map((account) => (
+                            <div
+                                key={account.id}
+                                className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition"
+                            >
+                                <div className="flex items-center justify-between mb-3">
+                                    <h2 className="font-semibold text-gray-800 text-lg">
+                                        {account.name}
+                                    </h2>
+
+                                    <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">
+                                        {account.type === 1 ? "Carteira" : "Banco"}
+                                    </span>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <p className="text-sm text-gray-500">Saldo atual</p>
+
+                                    <p className="text-xl font-bold text-gray-900">
+                                        {account.currentBalance.toLocaleString("pt-BR", {
+                                            style: "currency",
+                                            currency: "BRL",
+                                        })}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="rounded-2xl border-2 border-dashed border-gray-200 h-64 flex items-center justify-center text-gray-400">
+                        Nenhuma conta cadastrada
+                    </div>
+                )}
             </main>
 
             {/* ── Footer ── */}

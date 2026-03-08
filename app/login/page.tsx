@@ -1,15 +1,9 @@
 "use client";
-
-import financialImage from "../../public/pexels-gabby-k-6289070.jpg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { api } from "../services/api";
+import financialImage from "../../public/pexels-gabby-k-6289070.jpg";
 import Image from "next/image";
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: "/api",
-    withCredentials: true,
-});
 
 export default function Login() {
     const router = useRouter();
