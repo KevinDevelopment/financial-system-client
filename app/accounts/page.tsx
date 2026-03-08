@@ -194,10 +194,30 @@ export default function Dashboard() {
 
             {/* ── Content ── */}
             <main className="flex-1 px-5 py-8 max-w-7xl w-full mx-auto">
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">Contas</h1>
-                <p className="text-gray-400 text-sm mb-8">
-                    Gerencie suas contas financeiras.
-                </p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                            Contas
+                        </h1>
+
+                        <p className="text-gray-400 text-sm">
+                            Gerencie suas contas financeiras.
+                        </p>
+                    </div>
+
+                    <button
+                        onClick={() => router.push("/accounts/new")}
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-black/90 transition w-full sm:w-auto"
+                    >
+                        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M8 4v8M4 8h8" />
+                        </svg>
+
+                        Nova conta
+                    </button>
+
+                </div>
 
                 {accounts.length > 0 ? (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
